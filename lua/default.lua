@@ -11,7 +11,7 @@ do
 end
 
 do -- GUI
-  vim.o.guifont = 'Source Code Pro:h12,Symbols Nerd Font'
+  vim.o.guifont = 'Maple Mono,MesloLGM Nerd Font,Consolas,Symbols Nerd Font:h12'
   vim.o.guifontwide = 'Noto Sans Mono CJK SC:h12,Symbols Nerd Font'
   vim.g.lines = 30
   vim.g.columns = 120
@@ -32,19 +32,31 @@ do -- GUI
     end
   end
   do --Neovide
-    vim.g.neovide_transparency = 1.0 -- 透明度
-    vim.g.neovide_no_idle = true -- 实时渲染
-    vim.g.neovide_remember_window_size = true -- 记住窗口尺寸
-    vim.g.neovide_cursor_vfx_mode = 'railgun' --光标动画类型
-    vim.g.neovide_cursor_antialiasing = true -- 光标抗锯齿
-    vim.g.neovide_cursor_vfx_opacity = 100.0 -- 粒子不透明度
-    vim.g.neovide_cursor_vfx_particle_lifetime = 4.0 -- 粒子寿命
-    vim.g.neovide_cursor_vfx_particle_density = 7.0 -- 粒子密度
-    vim.g.neovide_cursor_vfx_particle_speed = 5.0 -- 粒子运动速度
-    vim.g.neovide_cursor_vfx_particle_phase = 3.3 -- 粒子阶段粒子运动整齐程度
-    vim.g.neovide_cursor_vfx_particle_curl = 0.5 -- 粒子曲线运动强度
-    vim.g.neovide_cursor_animation_length = 0.1 -- 光标动画时间
-    vim.g.neovide_cursor_trail_length = 0.2 -- 光标拖尾长度
+    if vim.g.neovide then
+      vim.g.neovide_transparency = 0.0 -- 透明度
+      vim.g.transparency = 0.8
+      vim.g.neovide_background_color = '#0f1117f0'
+      vim.g.neovide_floating_blur_amount_x = 5.0
+      vim.g.neovide_floating_blur_amount_y = 5.0
+
+      vim.g.neovide_no_idle = false -- 实时渲染
+      vim.g.neovide_refresh_rate = 60 -- 刷新率
+      vim.g.neovide_refresh_rate_idle = 10 -- 刷新率
+      -- vim.g.neovide_remember_window_size = true -- 记住窗口尺寸
+      -- vim.g.neovide_fullscreen = true -- 全屏显示
+      vim.g.neovide_input_macos_alt_is_meta = true -- 使用Meta键
+      vim.g.neovide_hide_mouse_when_typing = true -- 输入时隐藏鼠标
+      vim.g.neovide_cursor_vfx_mode = 'railgun' --光标动画类型
+      -- vim.g.neovide_cursor_antialiasing = true -- 光标抗锯齿
+      -- vim.g.neovide_cursor_vfx_opacity = 100.0 -- 粒子不透明度
+      -- vim.g.neovide_cursor_vfx_particle_lifetime = 4.0 -- 粒子寿命
+      -- vim.g.neovide_cursor_vfx_particle_density = 7.0 -- 粒子密度
+      -- vim.g.neovide_cursor_vfx_particle_speed = 5.0 -- 粒子运动速度
+      -- vim.g.neovide_cursor_vfx_particle_phase = 3.3 -- 粒子阶段粒子运动整齐程度
+      -- vim.g.neovide_cursor_vfx_particle_curl = 0.5 -- 粒子曲线运动强度
+      -- vim.g.neovide_cursor_animation_length = 0.1 -- 光标动画时间
+      -- vim.g.neovide_cursor_trail_length = 0.2 -- 光标拖尾长度
+    end
   end
 end
 
@@ -56,7 +68,9 @@ do -- 按键
 end
 
 do -- 补全
-  vim.o.completeopt = 'menuone,noinsert,noselect' -- 默认补全提示
+  vim.o.completeopt = 'menuone,noinsert,noselect,preview' -- 默认补全提示
+  vim.o.wildmenu = true -- 补全
+  vim.o.wildmode = 'full'
 end
 
 do -- buffer 显示
@@ -92,11 +106,11 @@ end
 do -- 状态栏
   vim.o.showmode = true -- 显示当前模式
   vim.o.ruler = true -- 状态栏显示光标位置
+  vim.o.laststatus = 3 -- 显示最后buffer的状态
 end
 
 do -- 命令
   vim.o.cmdheight = 1 -- 命令高度
-  vim.o.wildmenu = true -- 开启命令补全
 end
 
 do -- 缩进
@@ -144,18 +158,18 @@ do -- auto switch to default input method
     end
     ---@diagnostic disable-next-line: empty-block
     if vim.fn.has('mac') == 1 then
-      -- mac 使用 macism
+      if vim.fn.executable('macism') == 1 then
+        vim.fn.system('macism com.apple.keylayout.ABC')
+      end
     end
   end
-  vim.cmd([[
-    augroup switch_to_default_input_method
-      autocmd!
-      autocmd InsertLeave * lua switch_to_default_input_method()
-      autocmd VimEnter    * lua switch_to_default_input_method()
-    augroup END
-  ]])
+
+  local auto_switch_input_method_group = vim.api.nvim_create_augroup('AutoSwitchInputMethod', { clear = true })
+  vim.api.nvim_create_autocmd(
+    { 'InsertLeave', 'VimEnter' },
+    { pattern = '*', command = 'lua switch_to_default_input_method()', group = auto_switch_input_method_group }
+  )
 end
 
 vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true, silent = true })
-

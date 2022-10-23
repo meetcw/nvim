@@ -15,7 +15,6 @@ do -- 外观
         alternate_backgrounds = false,
         custom_colors = function(c, _, _)
           return {
-            { 'VertSplit', c.dark_black_alt, c.none },
             {
               {
                 'LspReferenceText',
@@ -25,13 +24,27 @@ do -- 外观
               c.none,
               c.darkish_black,
             },
-            -- lewis6991/gitsigns.nvim'
-            { 'GitSignsAdd', c.green, c.none },
-            { 'GitSignsChange', c.yellow, c.none },
-            { 'GitSignsDelete', c.red, c.none },
-            { 'GitSignsDeleteLn', c.red, c.none },
           }
         end,
+      })
+    end,
+  })
+  use({
+    'xiyaowong/nvim-transparent',
+    config = function()
+      require('transparent').setup({
+        enable = true, -- boolean: enable transparent
+        extra_groups = { -- table/string: additional groups that should be cleared
+          'VertSplit',
+          -- lewis6991/gitsigns.nvim'
+          'GitSignsAdd',
+          'GitSignsChange',
+          'GitSignsDelete',
+          'GitSignsDeleteLn',
+          'NvimTreeNormal',
+          'TelescopeNormal',
+        },
+        exclude = {}, -- table: groups you don't want to clear
       })
     end,
   })
@@ -48,7 +61,10 @@ do -- 外观
           },
         },
       }, { mode = 'n', noremap = true, silent = true })
-      vim.g.dashboard_custom_header = {
+    end,
+    config = function()
+      local dashboard = require('dashboard')
+      dashboard.custom_header = {
         '                                                                               ',
         '                                                                               ',
         '                     .         .                    *                         .',
@@ -64,20 +80,29 @@ do -- 外观
         '                                                                               ',
         '                                                                               ',
       }
-      vim.g.dashboard_default_executive = 'telescope'
-      vim.g.dashboard_custom_section = {
-        a = {
-          description = { '  Find file                           SPC f f  ' },
-          command = 'Telescope find_files',
+      dashboard.custom_center = {
+        {
+          icon = '  ',
+          desc = 'Find file                           SPC f f',
+          action = 'Telescope find_files',
         },
-        b = { description = { '  Recently opened files               SPC f r  ' }, command = 'Telescope oldfiles' },
-        c = { description = { '  Open last session                   SPC s s  ' }, command = 'SessionLoad' },
-        d = {
-          description = { '  Settings                                      ' },
-          command = ':e ' .. vim.fn.stdpath('config') .. '/init.lua',
+        {
+          icon = '  ',
+          desc = 'Recently opened files               SPC f r',
+          action = 'Telescope oldfiles',
+        },
+        {
+          icon = '  ',
+          desc = 'Open last session                   SPC s s',
+          action = 'SessionLoad',
+        },
+        {
+          icon = '  ',
+          desc = 'Settings                                   ',
+          action = ':e ' .. vim.fn.stdpath('config') .. '/init.lua',
         },
       }
-      vim.g.dashboard_custom_footer = { 'meetcw' }
+      dashboard.custom_footer = { 'wxxxcxx' }
     end,
   })
 
@@ -342,7 +367,7 @@ do -- 提示
     config = function()
       require('gitsigns').setup({
         current_line_blame = true,
-        numhl = true,
+        numhl = false,
         linehl = false,
         signs = {
           add = { hl = 'GitSignsAdd', text = '█', numhl = 'GitSignsAddNr', linehl = 'GitSignsAddLn' },
@@ -370,7 +395,7 @@ do -- 编辑
       vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
 
       require('nvim-treesitter.configs').setup({
-        ensure_installed = 'maintained', -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+        ensure_installed = 'all', -- one of "all", "maintained" (parsers with maintainers), or a list of languages
         matchup = {
           enable = true, -- mandatory, false will disable the whole extension
         },
@@ -456,9 +481,17 @@ do -- 编辑
   })
 
   use({
-    'blackCauldron7/surround.nvim',
+    'kylechui/nvim-surround',
     config = function()
-      require('surround').setup({ mappings_style = 'sandwich' })
+      require('nvim-surround').setup({
+        -- Configuration here, or leave empty to use defaults
+      })
+    end,
+  })
+  use({
+    'ggandor/leap.nvim',
+    config = function()
+      require('leap').add_default_mappings()
     end,
   })
 
@@ -470,7 +503,27 @@ do -- 编辑
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-buffer',
         'hrsh7th/cmp-path',
-        'hrsh7th/cmp-cmdline',
+        -- {
+        --   'hrsh7th/cmp-cmdline',
+        --   config = function()
+        --     cmp.setup.cmdline('/', {
+        --       sources = {
+        --         { name = 'buffer' },
+        --       },
+        --     })
+        --     cmp.setup.cmdline('?', {
+        --       sources = {
+        --         { name = 'buffer' },
+        --       },
+        --     })
+        --     cmp.setup.cmdline(':', {
+        --       sources = {
+        --         { name = 'path' },
+        --         { name = 'cmdline' },
+        --       },
+        --     })
+        --   end
+        -- },
         {
           'saadparwaiz1/cmp_luasnip',
           dependencies = {
@@ -484,8 +537,8 @@ do -- 编辑
           },
         },
         {
-          'meetcw/cmp-browser-source',
-          path = '~/Projects/cmp-browser-source',
+          'wxxxcxx/cmp-browser-source',
+          -- path = '~/Projects/cmp-browser-source',
           config = function()
             require('cmp-browser-source').start_server()
           end,
@@ -549,6 +602,26 @@ do -- 编辑
                 fallback()
               end
             end, { 'i', 's' }),
+            ['<c-n>'] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_next_item()
+              elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+              elseif has_words_before() then
+                cmp.complete()
+              else
+                fallback()
+              end
+            end, { 'i', 's' }),
+            ['<c-p>'] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_prev_item()
+              elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+              else
+                fallback()
+              end
+            end, { 'i', 's' }),
             ['<c-space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
             ['<cr>'] = cmp.mapping.confirm({ select = true }),
           },
@@ -582,23 +655,6 @@ do -- 编辑
             { name = 'luasnip', priority = 2 },
             { name = 'path', priority = 1 },
           }),
-        })
-
-        cmp.setup.cmdline('/', {
-          sources = {
-            { name = 'buffer' },
-          },
-        })
-        cmp.setup.cmdline('?', {
-          sources = {
-            { name = 'buffer' },
-          },
-        })
-        cmp.setup.cmdline(':', {
-          sources = {
-            { name = 'path' },
-            { name = 'cmdline' },
-          },
         })
       end,
     })
@@ -794,6 +850,33 @@ do -- 交互
   })
 
   use({
+    'lmburns/lf.nvim',
+    setup = function()
+      keys.set_leader_key({
+        w = {
+          name = '+Window',
+          l = { [[<cmd>Lf<cr>]], 'List files' },
+        },
+      }, { noremap = true, silent = true })
+    end,
+    config = function()
+      -- This feature will not work if the plugin is lazy-loaded
+      vim.g.lf_netrw = 1
+
+      require('lf').setup({
+        default_cmd = 'lf',
+        escape_quit = true,
+        border = 'rounded',
+        highlights = {
+          Normal = { guibg = 'none' },
+          NormalFloat = { guibg = 'none' },
+        },
+      })
+    end,
+    requires = { 'plenary.nvim', 'toggleterm.nvim' },
+  })
+
+  use({
     'kyazdani42/nvim-tree.lua',
     dependencies = { 'kyazdani42/nvim-web-devicons' },
     setup = function()
@@ -803,73 +886,54 @@ do -- 交互
           f = { [[<cmd>NvimTreeToggle<cr>]], 'Toggle File Tree' },
         },
       }, { noremap = true, silent = true })
-      vim.g.nvim_tree_show_icons = {
-        git = 0,
-        folders = 1,
-        files = 1,
-        folder_arrows = 1,
-      }
-      vim.g.nvim_tree_git_hl = 1
-      vim.g.nvim_tree_highlight_opened_files = 1
     end,
     config = function()
       require('nvim-tree').setup({
-        disable_netrw = true,
-        hijack_netrw = true,
-        open_on_setup = false,
-        ignore_ft_on_setup = {},
-        auto_close = true,
-        open_on_tab = true,
-        hijack_cursor = false,
-        update_cwd = true,
-        update_to_buf_dir = {
-          enable = true,
-          auto_open = true,
-        },
-        diagnostics = {
-          enable = true,
-          icons = {
-            hint = '',
-            info = '',
-            warning = '',
-            error = '',
+        sort_by = 'case_sensitive',
+        sync_root_with_cwd = true,
+        respect_buf_cwd = true,
+        -- hijack_cursor = true,
+        view = {
+          adaptive_size = false,
+          number = false,
+          mappings = {
+            list = {
+              { key = 'u', action = 'dir_up' },
+            },
+          },
+          float = {
+            enable = false,
           },
         },
-        update_focused_file = {
-          enable = true,
-          update_cwd = true,
-          ignore_list = {},
-        },
-        system_open = {
-          cmd = nil,
-          args = {},
+        renderer = {
+          group_empty = true,
+          highlight_git = false,
+          highlight_opened_files = 'all',
+          root_folder_modifier = ':~',
+          indent_width = 2,
+          symlink_destination = true,
+          indent_markers = {
+            enable = true,
+            inline_arrows = false,
+            icons = {
+              corner = '└',
+              edge = '│',
+              item = '│',
+              bottom = '─',
+              none = ' ',
+            },
+          },
+          icons = {
+            show = {
+              folder_arrow = true,
+              file = true,
+              folder = true,
+              git = false,
+            },
+          },
         },
         filters = {
           dotfiles = true,
-          custom = {},
-        },
-        git = {
-          enable = true,
-          ignore = true,
-          timeout = 500,
-        },
-        view = {
-          width = 30,
-          height = 30,
-          hide_root_folder = false,
-          side = 'left',
-          auto_resize = true,
-          mappings = {
-            custom_only = false,
-            list = {},
-          },
-          number = false,
-          relativenumber = false,
-          signcolumn = 'yes',
-        },
-        trash = {
-          cmd = 'trash',
-          require_confirm = true,
         },
       })
     end,

@@ -106,8 +106,8 @@ M.on_lsp_attach = function(client, bufnr)
       a = { vim.lsp.buf.code_action, 'Action' },
       f = {
         function()
-          if client['resolved_capabilities']['document_formatting'] then
-            vim.lsp.buf.formatting()
+          if client['server_capabilities']['document_formatting'] then
+            vim.lsp.buf.format({ async = true })
           else
             vim.cmd([[Format]])
           end
