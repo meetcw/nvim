@@ -1,51 +1,47 @@
-local core = require('core')
-local use = core.straight.use
-local keys = core.keys
+local use = require('straight').use
+local keys = require('keys')
 
 do -- 外观
   use({
-    'andersevenrud/nordic.nvim',
+    'edeneast/nightfox.nvim',
     dependencies = { 'tjdevries/colorbuddy.nvim', 'nvim-treesitter/nvim-treesitter' },
     config = function()
-      require('nordic').colorscheme({
-        underline_option = 'undercurl',
-        italic = true,
-        italic_comments = true,
-        minimal_mode = false,
-        alternate_backgrounds = false,
-        custom_colors = function(c, _, _)
-          return {
-            {
-              {
-                'LspReferenceText',
-                'LspReferenceWrite',
-                'LspReferenceRead',
-              },
-              c.none,
-              c.darkish_black,
-            },
-          }
-        end,
-      })
-    end,
-  })
-  use({
-    'xiyaowong/nvim-transparent',
-    config = function()
-      require('transparent').setup({
-        enable = true, -- boolean: enable transparent
-        extra_groups = { -- table/string: additional groups that should be cleared
-          'VertSplit',
-          -- lewis6991/gitsigns.nvim'
-          'GitSignsAdd',
-          'GitSignsChange',
-          'GitSignsDelete',
-          'GitSignsDeleteLn',
-          'NvimTreeNormal',
-          'TelescopeNormal',
+      -- Default options
+      require('nightfox').setup({
+        options = {
+          -- Compiled file's destination location
+          compile_path = vim.fn.stdpath('cache') .. '/nightfox',
+          compile_file_suffix = '_compiled', -- Compiled file suffix
+          transparent = true, -- Disable setting background
+          terminal_colors = true, -- Set terminal colors (vim.g.terminal_color_*) used in `:terminal`
+          dim_inactive = false, -- Non focused panes set to alternative background
+          module_default = true, -- Default enable value for modules
+          styles = { -- Style to be applied to different syntax groups
+            comments = 'italic', -- Value is any valid attr-list value `:help attr-list`
+            conditionals = 'NONE',
+            constants = 'NONE',
+            functions = 'NONE',
+            keywords = 'NONE',
+            numbers = 'NONE',
+            operators = 'NONE',
+            strings = 'NONE',
+            types = 'NONE',
+            variables = 'NONE',
+          },
+          inverse = { -- Inverse highlight for different types
+            match_paren = false,
+            visual = false,
+            search = false,
+          },
+          modules = { -- List of various plugins and additional options
+            -- ...
+          },
         },
-        exclude = {}, -- table: groups you don't want to clear
+        palettes = {},
+        specs = {},
+        groups = {},
       })
+      vim.cmd([[colorscheme nordfox]])
     end,
   })
 
@@ -64,51 +60,56 @@ do -- 外观
     end,
     config = function()
       local dashboard = require('dashboard')
-      dashboard.custom_header = {
-        '                                                                               ',
-        '                                                                               ',
-        '                     .         .                    *                         .',
-        '   .        .                                         .           *            ',
-        '                             *            *                              *     ',
-        '               *        *         .                        *                   ',
-        '                           .         *         *                               ',
-        '            *     .                       .          *               .         ',
-        '                               ┌┐┌┌─┐┌─┐┬  ┬┬┌┬┐               *               ',
-        '            .    .         *   │││├┤ │ │└┐┌┘││││                 .             ',
-        '                               ┘└┘└─┘└─┘ └┘ ┴┴ ┴     *     .                   ',
-        '        .            .                                                        .',
-        '                                                                               ',
-        '                                                                               ',
-      }
-      dashboard.custom_center = {
-        {
-          icon = '  ',
-          desc = 'Find file                           SPC f f',
-          action = 'Telescope find_files',
+      dashboard.setup({
+        theme = 'doom',
+        config = {
+          header = {
+            '                                                                               ',
+            '                                                                               ',
+            '                     .         .                    *                         .',
+            '   .        .                                         .           *            ',
+            '                             *            *                              *     ',
+            '               *        *         .                        *                   ',
+            '                           .         *         *                               ',
+            '            *     .                       .          *               .         ',
+            '                               ┌┐┌┌─┐┌─┐┬  ┬┬┌┬┐               *               ',
+            '            .    .         *   │││├┤ │ │└┐┌┘││││                 .             ',
+            '                               ┘└┘└─┘└─┘ └┘ ┴┴ ┴     *     .                   ',
+            '        .            .                                                        .',
+            '                                                                               ',
+            '                                                                               ',
+          },
+          center = {
+            {
+              icon = '  ',
+              desc = 'Find file                           SPC f f',
+              action = 'Telescope find_files',
+            },
+            {
+              icon = '  ',
+              desc = 'Recently opened files               SPC f r',
+              action = 'Telescope oldfiles',
+            },
+            {
+              icon = '  ',
+              desc = 'Open last session                   SPC s s',
+              action = 'SessionLoad',
+            },
+            {
+              icon = '  ',
+              desc = 'Settings                                   ',
+              action = ':e ' .. vim.fn.stdpath('config') .. '/init.lua',
+            },
+          },
+          footer = { 'wxxxcxx' },
         },
-        {
-          icon = '  ',
-          desc = 'Recently opened files               SPC f r',
-          action = 'Telescope oldfiles',
-        },
-        {
-          icon = '  ',
-          desc = 'Open last session                   SPC s s',
-          action = 'SessionLoad',
-        },
-        {
-          icon = '  ',
-          desc = 'Settings                                   ',
-          action = ':e ' .. vim.fn.stdpath('config') .. '/init.lua',
-        },
-      }
-      dashboard.custom_footer = { 'wxxxcxx' }
+      })
     end,
   })
 
   use({
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'kyazdani42/nvim-web-devicons', opt = true },
+    dependencies = { 'kyazdani42/nvim-web-devicons' },
     config = function()
       local lualine = require('lualine')
       local colors = {
@@ -263,7 +264,7 @@ do -- 外观
       local encoding_widget = {
         'o:encoding', -- option component same as &encoding in viml
         fmt = string.upper, -- I'm not sure why it's upper case either ;)
-        cond = conditions.hide_in_width,
+        cond = conditions.buffer_not_empty,
         color = { fg = colors.green, gui = 'bold' },
       }
 
@@ -272,7 +273,7 @@ do -- 外观
         fmt = string.upper,
         icons_enabled = false, -- I think icons are cool but Eviline doesn't have them. sigh
         color = { fg = colors.green, gui = 'bold' },
-        cond = conditions.hide_in_width,
+        cond = conditions.buffer_not_empty,
       }
 
       -- Config
@@ -345,6 +346,34 @@ do -- 外观
       lualine.setup(config)
     end,
   })
+  use({
+    'folke/noice.nvim',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      'rcarriga/nvim-notify',
+    },
+    enabled = false,
+    config = function()
+      require('noice').setup({
+        lsp = {
+          -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+          override = {
+            ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+            ['vim.lsp.util.stylize_markdown'] = true,
+            ['cmp.entry.get_documentation'] = true,
+          },
+        },
+        -- you can enable a preset for easier configuration
+        presets = {
+          bottom_search = true, -- use a classic bottom cmdline for search
+          command_palette = true, -- position the cmdline and popupmenu together
+          long_message_to_split = true, -- long messages will be sent to a split
+          inc_rename = false, -- enables an input dialog for inc-rename.nvim
+          lsp_doc_border = false, -- add a border to hover docs and signature help
+        },
+      })
+    end,
+  })
 
   use({
     'jrudess/vim-foldtext',
@@ -371,9 +400,24 @@ do -- 提示
         linehl = false,
         signs = {
           add = { hl = 'GitSignsAdd', text = '█', numhl = 'GitSignsAddNr', linehl = 'GitSignsAddLn' },
-          change = { hl = 'GitSignsChange', text = '█', numhl = 'GitSignsChangeNr', linehl = 'GitSignsChangeLn' },
-          delete = { hl = 'GitSignsDelete', text = '█', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
-          topdelete = { hl = 'GitSignsDelete', text = '█', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
+          change = {
+            hl = 'GitSignsChange',
+            text = '█',
+            numhl = 'GitSignsChangeNr',
+            linehl = 'GitSignsChangeLn',
+          },
+          delete = {
+            hl = 'GitSignsDelete',
+            text = '█',
+            numhl = 'GitSignsDeleteNr',
+            linehl = 'GitSignsDeleteLn',
+          },
+          topdelete = {
+            hl = 'GitSignsDelete',
+            text = '█',
+            numhl = 'GitSignsDeleteNr',
+            linehl = 'GitSignsDeleteLn',
+          },
           changedelete = {
             hl = 'GitSignsChange',
             text = '▒',
@@ -483,9 +527,7 @@ do -- 编辑
   use({
     'kylechui/nvim-surround',
     config = function()
-      require('nvim-surround').setup({
-        -- Configuration here, or leave empty to use defaults
-      })
+      require('nvim-surround').setup({})
     end,
   })
   use({
@@ -673,7 +715,10 @@ do -- 交互
         keys.set_leader_key({
           f = {
             name = '+File',
-            b = { [[:lua require'telescope.builtin'.file_browser({hidden=true})<cr>]], 'Browser files' },
+            b = {
+              [[:lua require'telescope.builtin'.file_browser({hidden=true})<cr>]],
+              'Browser files',
+            },
             r = { '<cmd>Telescope oldfiles<cr>', 'Recently files' },
             f = { '<cmd>Telescope find_files<cr>', 'Find file' },
           },
@@ -895,7 +940,10 @@ do -- 交互
         -- hijack_cursor = true,
         view = {
           adaptive_size = false,
+          centralize_selection = false,
+          cursorline = true,
           number = false,
+          relativenumber = false,
           mappings = {
             list = {
               { key = 'u', action = 'dir_up' },
@@ -906,7 +954,7 @@ do -- 交互
           },
         },
         renderer = {
-          group_empty = true,
+          group_empty = false,
           highlight_git = false,
           highlight_opened_files = 'all',
           root_folder_modifier = ':~',
@@ -935,6 +983,43 @@ do -- 交互
         filters = {
           dotfiles = true,
         },
+      })
+      local function tab_win_closed(winnr)
+        local api = require('nvim-tree.api')
+        local tabnr = vim.api.nvim_win_get_tabpage(winnr)
+        local bufnr = vim.api.nvim_win_get_buf(winnr)
+        local buf_info = vim.fn.getbufinfo(bufnr)[1]
+        local tab_wins = vim.tbl_filter(function(w)
+          return w ~= winnr
+        end, vim.api.nvim_tabpage_list_wins(tabnr))
+        local tab_bufs = vim.tbl_map(vim.api.nvim_win_get_buf, tab_wins)
+        if buf_info.name:match('.*NvimTree_%d*$') then -- close buffer was nvim tree
+          -- Close all nvim tree on :q
+          if not vim.tbl_isempty(tab_bufs) then -- and was not the last window (not closed automatically by code below)
+            api.tree.close()
+          end
+        else -- else closed buffer was normal buffer
+          if #tab_bufs == 1 then -- if there is only 1 buffer left in the tab
+            local last_buf_info = vim.fn.getbufinfo(tab_bufs[1])[1]
+            if last_buf_info.name:match('.*NvimTree_%d*$') then -- and that buffer is nvim tree
+              vim.schedule(function()
+                if #vim.api.nvim_list_wins() == 1 then -- if its the last buffer in vim
+                  vim.cmd('quit') -- then close all of vim
+                else -- else there are more tabs open
+                  vim.api.nvim_win_close(tab_wins[1], true) -- then close only the tab
+                end
+              end)
+            end
+          end
+        end
+      end
+
+      vim.api.nvim_create_autocmd('WinClosed', {
+        callback = function()
+          local winnr = tonumber(vim.fn.expand('<amatch>'))
+          vim.schedule_wrap(tab_win_closed(winnr))
+        end,
+        nested = true,
       })
     end,
   })
@@ -995,4 +1080,6 @@ do -- 交互
   --     require("mkdir")
   --   end,
   -- })
+
+  use({ 'bfredl/nvim-miniyank' })
 end

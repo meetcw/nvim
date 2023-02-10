@@ -75,8 +75,10 @@ end
 
 do -- buffer 显示
   vim.o.shortmess = 'filnxtToOFIc' -- 减少消息提示（包括启动屏幕）
+  vim.o.signcolumn = 'auto:4-9' -- 显示 Sign
+  vim.wo.signcolumn = 'auto:4-9' -- 显示 Sign
+  vim.o.number = true -- 行号
   vim.wo.number = true -- 行号
-  vim.wo.signcolumn = 'yes' -- 显示 Sign
   vim.wo.relativenumber = true -- 使用相对行号
   vim.wo.cursorline = true -- 高亮当前行
   vim.o.showmatch = true -- 高亮成对的符号
@@ -173,3 +175,4 @@ end
 
 vim.api.nvim_set_keymap('v', '<', '<gv', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '>', '>gv', { noremap = true, silent = true })
+

@@ -11,6 +11,10 @@ local languages = {
   'json',
 }
 
+for _, v in ipairs(languages) do
+  require('language.' .. v)
+end
+
 return {
   setup = function()
     for _, v in ipairs(languages) do

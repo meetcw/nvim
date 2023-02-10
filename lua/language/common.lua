@@ -1,6 +1,5 @@
-local core = require('core')
-local keys = core.keys
-local use = core.straight.use
+local keys = require("keys")
+local use = require("straight").use
 
 do -- lsp
   use({
@@ -18,9 +17,9 @@ do -- lsp
     dependencies = { 'neovim/nvim-lspconfig' },
     config = function() end,
   })
-  use({
-    'nvim-lua/lsp_extensions.nvim',
-  })
+  -- use({
+  --   'nvim-lua/lsp_extensions.nvim',
+  -- })
 end
 
 use({
