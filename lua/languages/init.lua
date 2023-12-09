@@ -12,13 +12,13 @@ local languages = {
 }
 
 for _, v in ipairs(languages) do
-  require('language.' .. v)
+  require('languages.' .. v)
 end
 
 return {
   setup = function()
     for _, v in ipairs(languages) do
-      local language = require('language.' .. v)
+      local language = require('languages.' .. v)
       if type(language) == 'table' and type(language.setup) == 'function' then
         language.setup()
       end

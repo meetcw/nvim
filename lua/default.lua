@@ -11,8 +11,8 @@ do
 end
 
 do -- GUI
-  vim.o.guifont = 'Maple Mono,MesloLGM Nerd Font,Consolas,Symbols Nerd Font:h12'
-  vim.o.guifontwide = 'Noto Sans Mono CJK SC:h12,Symbols Nerd Font'
+  vim.o.guifont = 'Maple Mono,MesloLGM Nerd Font,Consolas,Microsoft Yahei,Symbols Nerd Font:h12'
+  vim.o.guifontwide = 'Noto Sans Mono CJK SC:h12,Microsoft Yahei,Symbols Nerd Font'
   vim.g.lines = 30
   vim.g.columns = 120
   do --Nvui

@@ -1,4 +1,4 @@
-local common = require('language.common')
+local common = require('languages.common')
 
 return {
   setup = function()
