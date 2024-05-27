@@ -19,13 +19,13 @@ use {
           }
         }
       },
-      {
-        'wxxxcxx/cmp-browser-source',
-        -- path = '~/Projects/cmp-browser-source',
-        config = function()
-          require('cmp-browser-source').start_server()
-        end
-      }
+      -- {
+      --   'wxxxcxx/cmp-browser-source',
+      --   -- path = '~/Projects/cmp-browser-source',
+      --   config = function()
+      --     require('cmp-browser-source').start_server()
+      --   end
+      -- }
     },
     config = function()
       local cmp = require('cmp')

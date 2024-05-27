@@ -3,6 +3,14 @@ local keys = require('keys')
 require('packages.theme')
 require('packages.dashboard')
 require('packages.statusline')
+require('packages.telescope')
+require('packages.file')
+require('packages.motion')
+require('packages.git')
+require('packages.completion')
+require('packages.outline')
+require('packages.treesitter')
+require('packages.terminal')
 do -- 外观
   use {
     'folke/noice.nvim', -- 美化VIM的提示

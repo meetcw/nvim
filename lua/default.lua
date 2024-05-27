@@ -1,3 +1,6 @@
+
+vim.cmd.lcd(vim.fn.expand('~')) -- 设置默认目录
+
 do
   vim.o.termguicolors = true -- 设置终端颜色
   vim.o.showtabline = 0 -- 设置标签页显示样式
@@ -11,10 +14,11 @@ do
 end
 
 do -- GUI
-  vim.o.guifont = 'Maple Mono,MesloLGM Nerd Font,Consolas,Microsoft Yahei,Symbols Nerd Font:h12'
+  vim.o.guifont = 'Consolas:h12'
   vim.o.guifontwide = 'Noto Sans Mono CJK SC:h12,Microsoft Yahei,Symbols Nerd Font'
   vim.g.lines = 30
   vim.g.columns = 120
+  vim.g.showcmdloc = 'statusline'
   do --Nvui
     if vim.g.nvui then
       vim.cmd([[NvuiOpacity 0.94]])

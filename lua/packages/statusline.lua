@@ -79,6 +79,14 @@ use {
       padding = {left = 1, right = 1}
     }
 
+    local command_widget = {
+      -- command component
+      function()
+        return '---------[' .. vim.fn.expand('%S') .. ']'
+      end,
+      padding = {left = 1, right = 1}
+    }
+
     local name_widget = {
       'filename',
       cond = conditions.buffer_not_empty,
@@ -215,7 +223,8 @@ use {
         },
         lualine_z = {
           encoding_widget,
-          format_widget
+          format_widget,
+          command_widget
         }
       },
       inactive_sections = {
