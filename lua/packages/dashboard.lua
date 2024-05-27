@@ -18,50 +18,69 @@ use {
   end,
   config = function()
     local dashboard = require('dashboard')
-    dashboard.setup(
-      {
-        theme = 'doom',
-        config = {
-          header = {
-            '                                                                               ',
-            '                                                                               ',
-            '                     .         .                    *                         .',
-            '   .        .                                         .           *            ',
-            '                             *            *                              *     ',
-            '               *        *         .                        *                   ',
-            '                           .         *         *                               ',
-            '            *     .                       .          *               .         ',
-            '                               ┌┐┌┌─┐┌─┐┬  ┬┬┌┬┐               *               ',
-            '            .    .         *   │││├┤ │ │└┐┌┘││││                 .             ',
-            '                               ┘└┘└─┘└─┘ └┘ ┴┴ ┴     *     .                   ',
-            '        .            .                                                        .',
-            '                                                                               ',
-            '                                                                               '
-          },
-          center = {
-            {
-              icon = '  ',
-              desc = 'Find file                           SPC f f',
-              action = 'Telescope find_files'
+    local refresh = function()
+      dashboard.setup(
+        {
+          theme = 'doom',
+          config = {
+            header = {
+              '                                                                               ',
+              '                                                                               ',
+              '                     .         .                    *                         .',
+              '   .        .                                         .           *            ',
+              '                             *            *                              *     ',
+              '               *        *         .                        *                   ',
+              '                           .         *         *                               ',
+              '            *     .                       .          *               .         ',
+              '                               ┌┐┌┌─┐┌─┐┬  ┬┬┌┬┐               *               ',
+              '            .    .         *   │││├┤ │ │└┐┌┘││││                 .             ',
+              '                               ┘└┘└─┘└─┘ └┘ ┴┴ ┴     *     .                   ',
+              '        .            .                                                        .',
+              '                                                                               ',
+              '                                                                               '
             },
-            {
-              icon = '  ',
-              desc = 'Recently opened files               SPC f r',
-              action = 'Telescope oldfiles'
+            center = {
+              {
+                icon = '  ',
+                desc = 'Find file                           SPC f f',
+                action = 'Telescope find_files'
+              },
+              {
+                icon = '  ',
+                desc = 'Recently opened files               SPC f r',
+                action = 'Telescope oldfiles'
+              },
+              {
+                icon = '  ',
+                desc = 'Open last session                   SPC s s',
+                action = 'SessionLoad'
+              },
+              {
+                icon = '  ',
+                desc = 'Settings                                   ',
+                action = ':e ' .. vim.fn.stdpath('config') .. '/init.lua'
+              }
             },
-            {
-              icon = '  ',
-              desc = 'Open last session                   SPC s s',
-              action = 'SessionLoad'
-            },
-            {
-              icon = '  ',
-              desc = 'Settings                                   ',
-              action = ':e ' .. vim.fn.stdpath('config') .. '/init.lua'
-            }
-          },
-          footer = {'wxxxcxx'}
+            footer = {'wxxxcxx'}
+          }
         }
+      )
+    end
+    local resize_dashboard_group = vim.api.nvim_create_augroup('resize_dashboard', {clear = true})
+    vim.api.nvim_create_user_command(
+      'DashboardRefresh',
+      function()
+        print('Hello')
+        -- refresh()
+      end,
+      {}
+    )
+    vim.api.nvim_create_autocmd(
+      {'VimResized'},
+      {
+        pattern = '*',
+        group = resize_dashboard,
+        command = 'DashboardRefresh'
       }
     )
   end

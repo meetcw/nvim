@@ -1,6 +1,6 @@
 local use = require('straight').use
 local keys = require('keys')
-local utils = require("utils")
+local utils = require('utils')
 
 use {
   'nvim-telescope/telescope.nvim',
@@ -13,11 +13,15 @@ use {
       {
         f = {
           name = '+File',
-          r = {'<cmd>Telescope oldfiles<cr>', 'Recently files'},
+          r = {
+            function()
+              require 'telescope.builtin'.oldfiles {}
+            end,
+            'Recently files'
+          },
           f = {
             function()
-              require 'telescope.builtin'.find_files {
-              }
+              require 'telescope.builtin'.find_files {}
             end,
             'Find file'
           }
@@ -33,14 +37,54 @@ use {
         },
         ['.'] = {
           name = '+Help',
-          o = {'<cmd>Telescope vim_options<cr>', 'Options'},
-          k = {'<cmd>Telescope keymaps<cr>', 'Keymaps'},
-          f = {'<cmd>Telescope filetypes<cr>', 'Filetypes'},
-          r = {'<cmd>Telescope registers<cr>', 'Registers'},
-          m = {'<cmd>Telescope marks<cr>', 'Marks'},
-          ['<space>'] = {'<cmd>Telescope help_tags<cr>', 'Help'},
-          a = {'<cmd>Telescope autocommands<cr>', 'Auto commands'},
-          h = {'<cmd>Telescope highlights<cr>', 'Highlights'}
+          o = {
+            function()
+              require 'telescope.builtin'.vim_options {}
+            end,
+            'Options'
+          },
+          k = {
+            function()
+              require 'telescope.builtin'.keymaps {}
+            end,
+            'Keymaps'
+          },
+          f = {
+            function()
+              require 'telescope.builtin'.filetypes {}
+            end,
+            'Filetypes'
+          },
+          r = {
+            function()
+              require 'telescope.builtin'.registers {}
+            end,
+            'Registers'
+          },
+          m = {
+            function()
+              require 'telescope.builtin'.marks {}
+            end,
+            'Marks'
+          },
+          ['<space>'] = {
+            function()
+              require 'telescope.builtin'.help_tags {}
+            end,
+            'Help'
+          },
+          a = {
+            function()
+              require 'telescope.builtin'.autocommands {}
+            end,
+            'Auto commands'
+          },
+          h = {
+            function()
+              require 'telescope.builtin'.highlights {}
+            end,
+            'Highlights'
+          }
         }
       },
       {noremap = true, silent = true}
@@ -132,7 +176,7 @@ use {
               }
             end,
             'File Browser'
-          },
+          }
         }
       },
       {noremap = true, silent = true}

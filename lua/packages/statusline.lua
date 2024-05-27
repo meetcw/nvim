@@ -82,7 +82,7 @@ use {
     local command_widget = {
       -- command component
       function()
-        return '---------[' .. vim.fn.expand('%S') .. ']'
+        return ''
       end,
       padding = {left = 1, right = 1}
     }
